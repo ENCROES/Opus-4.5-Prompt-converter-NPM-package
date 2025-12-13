@@ -1,0 +1,48 @@
+{
+  "name": "optimization-reviewer",
+  "version": "1.0.0",
+  "description": "Domain-agnostic prompt framework for reviewing optimizations across code, prompts, processes, architectures, and workflows",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "bin": {
+    "pre": "./bin/pre.js"
+  },
+  "files": [
+    "optimization-reviewer-human.md",
+    "optimization-reviewer-agent.toon",
+    "index.js",
+    "index.d.ts",
+    "bin",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "prompt",
+    "prompt-engineering",
+    "code-review",
+    "optimization",
+    "llm",
+    "claude",
+    "gpt",
+    "ai",
+    "review",
+    "workflow",
+    "agentic",
+    "cli"
+  ],
+  "author": "ENCROES (https://github.com/ENCROES)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ENCROES/optimization-reviewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ENCROES/optimization-reviewer/issues"
+  },
+  "homepage": "https://github.com/ENCROES/optimization-reviewer#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
