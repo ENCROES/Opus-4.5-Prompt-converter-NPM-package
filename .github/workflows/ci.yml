@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Run tests
+        run: npm test
+
+      - name: Test ESM import
+        run: |
+          node --input-type=module -e "
+            import { humanPrompt, agentPrompt } from './index.mjs';
+            if (!humanPrompt || !agentPrompt) {
+              console.error('ESM imports failed');
+              process.exit(1);
+            }
+            console.log('ESM imports successful');
+          "
+
+      - name: Test CJS require
+        run: |
+          node -e "
+            const { humanPrompt, agentPrompt } = require('./index.js');
+            if (!humanPrompt || !agentPrompt) {
+              console.error('CJS require failed');
+              process.exit(1);
+            }
+            console.log('CJS require successful');
+          "
+
+      - name: Test CLI
+        run: |
+          node bin/pre.js --help
+          node bin/pre.js "test prompt" --quiet | head -5
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts || npm install
+
+      - name: Run ESLint
+        run: npm run lint --if-present
