@@ -132,7 +132,8 @@ pre -f input.md -o review.md
 | `-o, --output <path>` | Write to file instead of stdout |
 | `-q, --quiet` | Suppress instructional wrapper |
 | `--api` | Call Claude API directly |
-| `--model <model>` | Model for API mode |
+| `--model <model>` | Model for API mode (default: claude-opus-4-20250514) |
+| `--max-tokens <n>` | Max tokens for API response (default: 4096) |
 
 ### API Mode
 
@@ -186,6 +187,17 @@ const response = await llm.complete({
 });
 ```
 
+### Lazy Loading with Getter Functions
+
+For applications where startup time matters, use the getter functions to defer file I/O:
+
+```javascript
+const { getHumanPrompt, getAgentPrompt } = require('optimization-reviewer');
+
+// File is only read when you call the function
+const prompt = getAgentPrompt();
+```
+
 Or with Claude's API:
 
 ```javascript
@@ -195,7 +207,7 @@ import { agentPrompt } from 'optimization-reviewer';
 const client = new Anthropic();
 
 const response = await client.messages.create({
-  model: 'claude-sonnet-4-20250514', // Opus 4.5 recommended for complex reviews
+  model: 'claude-opus-4-20250514',
   max_tokens: 4096,
   system: agentPrompt,
   messages: [
