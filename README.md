@@ -473,8 +473,8 @@ Contributions welcome! Please:
 ### Development
 
 ```bash
-git clone https://github.com/ENCROES/optimization-reviewer
-cd optimization-reviewer
+git clone https://github.com/ENCROES/Opus-4.5-Prompt-converter-NPM-package
+cd Opus-4.5-Prompt-converter-NPM-package
 npm test  # validates prompt structure
 ```
 

@@ -50,12 +50,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ENCROES/optimization-reviewer.git"
+    "url": "git+https://github.com/ENCROES/Opus-4.5-Prompt-converter-NPM-package.git"
   },
   "bugs": {
-    "url": "https://github.com/ENCROES/optimization-reviewer/issues"
+    "url": "https://github.com/ENCROES/Opus-4.5-Prompt-converter-NPM-package/issues"
   },
-  "homepage": "https://github.com/ENCROES/optimization-reviewer#readme",
+  "homepage": "https://github.com/ENCROES/Opus-4.5-Prompt-converter-NPM-package#readme",
   "engines": {
     "node": ">=18.0.0"
   }
