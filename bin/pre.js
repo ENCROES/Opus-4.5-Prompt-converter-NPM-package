@@ -1,9 +1,15 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const path = require('path');
+const { parseArgs } = require('util');
 
 const { humanPrompt, agentPrompt } = require('../index.js');
+
+// Constants - document magic numbers
+const DEFAULT_MODEL = 'claude-opus-4-20250514';
+const MAX_TOKENS = 4096;
+const API_VERSION = '2023-06-01';
+const STDIN_TIMEOUT_MS = 30000;
 
 const HELP = `
 pre - Prompt Review using optimization-reviewer
@@ -21,7 +27,8 @@ OPTIONS:
   -o, --output <path>         Write to file instead of stdout
   -q, --quiet                 Suppress instructional output
   --api                       Call Claude API (requires ANTHROPIC_API_KEY)
-  --model <model>             Model for API mode (default: claude-sonnet-4-20250514)
+  --model <model>             Model for API mode (default: ${DEFAULT_MODEL})
+  --max-tokens <n>            Max tokens for API response (default: ${MAX_TOKENS})
 
 EXAMPLES:
   pre "You are a helpful assistant. Answer questions concisely."
@@ -38,69 +45,67 @@ OUTPUT:
   With --api, calls the API directly and outputs the review.
 `;
 
+function parseCliArgs(argv) {
+  const options = {
+    help: { type: 'boolean', short: 'h' },
+    agent: { type: 'boolean', short: 'a' },
+    raw: { type: 'boolean', short: 'r' },
+    quiet: { type: 'boolean', short: 'q' },
+    api: { type: 'boolean' },
+    file: { type: 'string', short: 'f' },
+    output: { type: 'string', short: 'o' },
+    model: { type: 'string' },
+    'max-tokens': { type: 'string' }
+  };
+
+  try {
+    const { values, positionals } = parseArgs({
+      args: argv,
+      options,
+      allowPositionals: true
+    });
+
+    return {
+      help: values.help || false,
+      agent: values.agent || false,
+      raw: values.raw || false,
+      quiet: values.quiet || false,
+      api: values.api || false,
+      file: values.file || null,
+      output: values.output || null,
+      model: values.model || DEFAULT_MODEL,
+      maxTokens: values['max-tokens'] ? parseInt(values['max-tokens'], 10) : MAX_TOKENS,
+      positionals
+    };
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+    console.error('Use --help for usage information.');
+    process.exit(1);
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.length === 0 && process.stdin.isTTY) {
     console.log(HELP);
     process.exit(0);
   }
 
-  // Parse flags
-  const flags = {
-    agent: false,
-    raw: false,
-    quiet: false,
-    api: false,
-    file: null,
-    output: null,
-    model: 'claude-sonnet-4-20250514'
-  };
-  
-  let prompt = null;
-  
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    switch (arg) {
-      case '-h':
-      case '--help':
-        console.log(HELP);
-        process.exit(0);
-      case '-a':
-      case '--agent':
-        flags.agent = true;
-        break;
-      case '-r':
-      case '--raw':
-        flags.raw = true;
-        break;
-      case '-q':
-      case '--quiet':
-        flags.quiet = true;
-        break;
-      case '--api':
-        flags.api = true;
-        break;
-      case '-f':
-      case '--file':
-        flags.file = args[++i];
-        break;
-      case '-o':
-      case '--output':
-        flags.output = args[++i];
-        break;
-      case '--model':
-        flags.model = args[++i];
-        break;
-      default:
-        if (!arg.startsWith('-')) {
-          prompt = arg;
-        } else {
-          console.error(`Unknown option: ${arg}`);
-          process.exit(1);
-        }
-    }
+  const flags = parseCliArgs(args);
+
+  if (flags.help) {
+    console.log(HELP);
+    process.exit(0);
   }
+
+  // Validate maxTokens
+  if (isNaN(flags.maxTokens) || flags.maxTokens <= 0) {
+    console.error('Error: --max-tokens must be a positive integer');
+    process.exit(1);
+  }
+
+  let prompt = flags.positionals[0] || null;
 
   // Get prompt from file, argument, or stdin
   if (flags.file) {
@@ -120,7 +125,7 @@ async function main() {
   }
 
   const systemPrompt = flags.agent ? agentPrompt : humanPrompt;
-  
+
   // Raw mode: just output the system prompt
   if (flags.raw) {
     output(systemPrompt, flags.output);
@@ -134,13 +139,13 @@ async function main() {
       console.error('Error: ANTHROPIC_API_KEY environment variable required for --api mode');
       process.exit(1);
     }
-    
+
     if (!flags.quiet) {
-      console.error('Calling Claude API...');
+      console.error(`Calling Claude API (model: ${flags.model})...`);
     }
-    
+
     try {
-      const review = await callAPI(apiKey, flags.model, systemPrompt, prompt);
+      const review = await callAPI(apiKey, flags.model, systemPrompt, prompt, flags.maxTokens);
       output(review, flags.output);
     } catch (err) {
       console.error(`API Error: ${err.message}`);
@@ -155,54 +160,68 @@ async function main() {
 }
 
 function readStdin() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let data = '';
+    const timeout = setTimeout(() => {
+      reject(new Error(`Stdin read timed out after ${STDIN_TIMEOUT_MS}ms`));
+    }, STDIN_TIMEOUT_MS);
+
     process.stdin.setEncoding('utf8');
+
     process.stdin.on('readable', () => {
       let chunk;
       while ((chunk = process.stdin.read()) !== null) {
         data += chunk;
       }
     });
-    process.stdin.on('end', () => resolve(data.trim()));
+
+    process.stdin.on('end', () => {
+      clearTimeout(timeout);
+      resolve(data.trim());
+    });
+
+    process.stdin.on('error', (err) => {
+      clearTimeout(timeout);
+      reject(new Error(`Failed to read stdin: ${err.message}`));
+    });
   });
 }
 
 function formatForChat(systemPrompt, userPrompt, quiet) {
   const divider = '─'.repeat(60);
-  
+
   let out = '';
   if (!quiet) {
     out += `${divider}\n`;
     out += `PASTE THE FOLLOWING INTO CLAUDE.AI (or similar)\n`;
     out += `${divider}\n\n`;
   }
-  
+
   out += systemPrompt;
   out += '\n\n---\n\n';
   out += 'Review this optimization:\n\n';
   out += userPrompt;
-  
+
   if (!quiet) {
     out += `\n\n${divider}\n`;
     out += `END OF PROMPT\n`;
     out += `${divider}`;
   }
-  
+
   return out;
 }
 
-async function callAPI(apiKey, model, systemPrompt, userPrompt) {
+async function callAPI(apiKey, model, systemPrompt, userPrompt, maxTokens) {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01'
+      'anthropic-version': API_VERSION
     },
     body: JSON.stringify({
       model: model,
-      max_tokens: 4096,
+      max_tokens: maxTokens,
       system: systemPrompt,
       messages: [
         { role: 'user', content: `Review this optimization:\n\n${userPrompt}` }
@@ -212,22 +231,46 @@ async function callAPI(apiKey, model, systemPrompt, userPrompt) {
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`${response.status}: ${error}`);
+    throw new Error(`HTTP ${response.status}: ${error}`);
   }
 
   const data = await response.json();
-  return data.content.map(block => block.text || '').join('\n');
+
+  // Validate API response structure
+  if (!data || typeof data !== 'object') {
+    throw new Error('Invalid API response: expected JSON object');
+  }
+
+  if (!Array.isArray(data.content)) {
+    throw new Error('Invalid API response: missing or invalid "content" array');
+  }
+
+  if (data.content.length === 0) {
+    throw new Error('Invalid API response: empty "content" array');
+  }
+
+  const textBlocks = data.content.filter(block => block.type === 'text');
+  if (textBlocks.length === 0) {
+    throw new Error('Invalid API response: no text blocks in response');
+  }
+
+  return textBlocks.map(block => block.text || '').join('\n');
 }
 
 function output(content, filePath) {
   if (filePath) {
-    fs.writeFileSync(filePath, content);
+    try {
+      fs.writeFileSync(filePath, content);
+    } catch (err) {
+      console.error(`Error writing to file: ${err.message}`);
+      process.exit(1);
+    }
   } else {
     console.log(content);
   }
 }
 
 main().catch(err => {
-  console.error(err.message);
+  console.error(`Error: ${err.message}`);
   process.exit(1);
 });
