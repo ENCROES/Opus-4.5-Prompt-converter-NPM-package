@@ -1,6 +1,6 @@
 const fs = require('fs');
 const assert = require('assert');
-const { execSync, spawn } = require('child_process');
+const { execSync } = require('child_process');
 const path = require('path');
 
 console.log('Running optimization-reviewer test suite...\n');
@@ -19,19 +19,6 @@ function test(name, fn) {
     console.error(`  ${err.message}`);
     failed++;
   }
-}
-
-function testAsync(name, fn) {
-  return fn()
-    .then(() => {
-      console.log(`✓ ${name}`);
-      passed++;
-    })
-    .catch((err) => {
-      console.log(`✗ ${name}`);
-      console.error(`  ${err.message}`);
-      failed++;
-    });
 }
 
 // ============================================
@@ -240,7 +227,7 @@ test('CLI fails on unknown option', () => {
 test('CLI --api fails without API key', () => {
   try {
     // Unset ANTHROPIC_API_KEY for this test
-    const result = execSync('node bin/pre.js "test" --api 2>&1', {
+    execSync('node bin/pre.js "test" --api 2>&1', {
       encoding: 'utf8',
       env: { ...process.env, ANTHROPIC_API_KEY: '' }
     });

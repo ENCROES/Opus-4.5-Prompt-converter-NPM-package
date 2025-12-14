@@ -193,7 +193,7 @@ function formatForChat(systemPrompt, userPrompt, quiet) {
   let out = '';
   if (!quiet) {
     out += `${divider}\n`;
-    out += `PASTE THE FOLLOWING INTO CLAUDE.AI (or similar)\n`;
+    out += 'PASTE THE FOLLOWING INTO CLAUDE.AI (or similar)\n';
     out += `${divider}\n\n`;
   }
 
@@ -204,7 +204,7 @@ function formatForChat(systemPrompt, userPrompt, quiet) {
 
   if (!quiet) {
     out += `\n\n${divider}\n`;
-    out += `END OF PROMPT\n`;
+    out += 'END OF PROMPT\n';
     out += `${divider}`;
   }
 
