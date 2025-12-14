@@ -244,9 +244,9 @@ test('CLI --quiet suppresses wrapper', () => {
   assert(normalOutput.includes('PASTE THE FOLLOWING'), 'Normal should have wrapper');
 });
 
-test('CLI default model is claude-opus-4-20250514', () => {
+test('CLI default model is claude-opus-4-5-20251101', () => {
   const output = execSync('node bin/pre.js --help', { encoding: 'utf8' });
-  assert(output.includes('claude-opus-4-20250514'), 'Default model should be Opus');
+  assert(output.includes('claude-opus-4-5-20251101'), 'Default model should be Opus');
 });
 
 // ============================================

@@ -132,7 +132,7 @@ pre -f input.md -o review.md
 | `-o, --output <path>` | Write to file instead of stdout |
 | `-q, --quiet` | Suppress instructional wrapper |
 | `--api` | Call Claude API directly |
-| `--model <model>` | Model for API mode (default: claude-opus-4-20250514) |
+| `--model <model>` | Model for API mode (default: claude-opus-4-5-20251101) |
 | `--max-tokens <n>` | Max tokens for API response (default: 4096) |
 
 ### API Mode
@@ -207,7 +207,7 @@ import { agentPrompt } from 'optimization-reviewer';
 const client = new Anthropic();
 
 const response = await client.messages.create({
-  model: 'claude-opus-4-20250514',
+  model: 'claude-opus-4-5-20251101',
   max_tokens: 4096,
   system: agentPrompt,
   messages: [

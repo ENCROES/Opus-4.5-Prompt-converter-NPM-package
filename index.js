@@ -42,5 +42,14 @@ Object.defineProperties(module.exports, {
   agent: {
     get: loadAgentPrompt,
     enumerable: true
+  },
+  // Getter functions for explicit lazy loading
+  getHumanPrompt: {
+    value: loadHumanPrompt,
+    enumerable: true
+  },
+  getAgentPrompt: {
+    value: loadAgentPrompt,
+    enumerable: true
   }
 });

@@ -6,7 +6,7 @@ const { parseArgs } = require('util');
 const { humanPrompt, agentPrompt } = require('../index.js');
 
 // Constants - document magic numbers
-const DEFAULT_MODEL = 'claude-opus-4-20250514';
+const DEFAULT_MODEL = 'claude-opus-4-5-20251101';
 const MAX_TOKENS = 4096;
 const API_VERSION = '2023-06-01';
 const STDIN_TIMEOUT_MS = 30000;
