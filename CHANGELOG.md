@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive test suite (40 tests)
 
 ### Changed
+- Agent prompt converted from custom `.toon` format to standard Markdown
 - Default model changed to `claude-opus-4-5-20251101` (was `claude-sonnet-4-20250514`)
 - CLI now uses Node.js built-in `parseArgs` instead of hand-rolled parser
 - Prompts are now lazy-loaded on first access instead of at require time

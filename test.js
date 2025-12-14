@@ -51,7 +51,7 @@ test('agent alias equals agentPrompt', () => {
 test('prompts match file contents', () => {
   const pkg = require('./index.js');
   const humanFile = fs.readFileSync('optimization-reviewer-human.md', 'utf8');
-  const agentFile = fs.readFileSync('optimization-reviewer-agent.toon', 'utf8');
+  const agentFile = fs.readFileSync('optimization-reviewer-agent.md', 'utf8');
   assert(pkg.humanPrompt === humanFile, 'humanPrompt should match file');
   assert(pkg.agentPrompt === agentFile, 'agentPrompt should match file');
 });
@@ -92,34 +92,34 @@ test('has validation checklist', () => {
 // ============================================
 console.log('\n--- Agent Prompt Structure ---');
 
-const agent = fs.readFileSync('optimization-reviewer-agent.toon', 'utf8');
+const agent = fs.readFileSync('optimization-reviewer-agent.md', 'utf8');
 
-test('has SAFETY_SCREEN block', () => {
-  assert(agent.includes('SAFETY_SCREEN'), 'Missing: SAFETY_SCREEN');
+test('has Safety Screen section', () => {
+  assert(agent.includes('## Safety Screen'), 'Missing: Safety Screen section');
 });
 
-test('has CLARIFICATION block', () => {
-  assert(agent.includes('CLARIFICATION'), 'Missing: CLARIFICATION');
+test('has Clarification section', () => {
+  assert(agent.includes('## Clarification'), 'Missing: Clarification section');
 });
 
-test('has TYPE_DETECTION block', () => {
-  assert(agent.includes('TYPE_DETECTION'), 'Missing: TYPE_DETECTION');
+test('has Type Detection section', () => {
+  assert(agent.includes('## Type Detection'), 'Missing: Type Detection section');
 });
 
-test('has EVALUATION_DIMENSIONS block', () => {
-  assert(agent.includes('EVALUATION_DIMENSIONS'), 'Missing: EVALUATION_DIMENSIONS');
+test('has Evaluation Dimensions section', () => {
+  assert(agent.includes('## Evaluation Dimensions'), 'Missing: Evaluation Dimensions section');
 });
 
-test('has OUTPUT_STRUCTURE block', () => {
-  assert(agent.includes('OUTPUT_STRUCTURE'), 'Missing: OUTPUT_STRUCTURE');
+test('has Output Structure section', () => {
+  assert(agent.includes('## Output Structure'), 'Missing: Output Structure section');
 });
 
-test('has VALIDATION block', () => {
-  assert(agent.includes('VALIDATION'), 'Missing: VALIDATION');
+test('has Validation section', () => {
+  assert(agent.includes('## Validation'), 'Missing: Validation section');
 });
 
-test('has FAILURE_HANDLING block', () => {
-  assert(agent.includes('FAILURE_HANDLING'), 'Missing: FAILURE_HANDLING');
+test('has Failure Handling section', () => {
+  assert(agent.includes('## Failure Handling'), 'Missing: Failure Handling section');
 });
 
 // ============================================
@@ -152,7 +152,7 @@ test('CLI accepts positional prompt argument', () => {
 
 test('CLI --agent flag uses agent prompt', () => {
   const output = execSync('node bin/pre.js "test" -q --agent', { encoding: 'utf8' });
-  assert(output.includes('SAFETY_SCREEN') || output.includes('AGENT:'), 'Agent prompt not used');
+  assert(output.includes('## Safety Screen') || output.includes('(Agent)'), 'Agent prompt not used');
 });
 
 test('CLI --raw outputs only system prompt', () => {

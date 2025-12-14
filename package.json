@@ -17,7 +17,7 @@
   },
   "files": [
     "optimization-reviewer-human.md",
-    "optimization-reviewer-agent.toon",
+    "optimization-reviewer-agent.md",
     "index.js",
     "index.mjs",
     "index.d.ts",

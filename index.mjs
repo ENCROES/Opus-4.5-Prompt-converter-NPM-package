@@ -30,7 +30,7 @@ export function getHumanPrompt() {
 export function getAgentPrompt() {
   if (_agentPrompt === null) {
     _agentPrompt = readFileSync(
-      join(__dirname, 'optimization-reviewer-agent.toon'),
+      join(__dirname, 'optimization-reviewer-agent.md'),
       'utf8'
     );
   }

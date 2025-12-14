@@ -79,16 +79,15 @@ export function getAgentPrompt(): string;
 
 | Version | File | Use Case |
 |---------|------|----------|
-| Human | `optimization-reviewer-human.md` | Chat interfaces, readable |
-| Agent | `optimization-reviewer-agent.toon` | Programmatic, token-efficient |
+| Human | `optimization-reviewer-human.md` | Chat interfaces, verbose with examples |
+| Agent | `optimization-reviewer-agent.md` | Programmatic, concise |
 
-Both produce identical structured output. See [docs/toon-format.md](docs/toon-format.md) for the `.toon` format spec.
+Both produce identical structured output.
 
 ## More Documentation
 
 - [Examples](docs/examples.md)
 - [Customization](docs/customization.md)
-- [Toon Format](docs/toon-format.md)
 
 ## Development
 
