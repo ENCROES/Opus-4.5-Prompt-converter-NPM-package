@@ -5,7 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2024-XX-XX
+## [Unreleased]
+
+### Added
+- ESM support with dual CJS/ESM exports
+- `getHumanPrompt()` and `getAgentPrompt()` lazy-loading functions
+- `--max-tokens` CLI flag for configurable API response length
+- GitHub Actions CI workflow (Node 18, 20, 22)
+- ESLint configuration
+- Comprehensive test suite (40 tests)
+
+### Changed
+- Default model changed to `claude-opus-4-20250514` (was `claude-sonnet-4-20250514`)
+- CLI now uses Node.js built-in `parseArgs` instead of hand-rolled parser
+- Prompts are now lazy-loaded on first access instead of at require time
+
+### Fixed
+- API response validation to prevent silent failures on malformed responses
+- Stdin reading now has proper error handling and timeout
+- CLI now supports `--flag=value` syntax in addition to `--flag value`
+
+## [1.0.0] - 2024-12-15
 
 ### Added
 - Initial npm release
