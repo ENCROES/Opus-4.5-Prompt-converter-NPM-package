@@ -18,7 +18,7 @@ function loadHumanPrompt() {
 function loadAgentPrompt() {
   if (_agentPrompt === null) {
     _agentPrompt = fs.readFileSync(
-      path.join(__dirname, 'optimization-reviewer-agent.md'),
+      path.join(__dirname, 'optimization-reviewer-agent.toon'),
       'utf8'
     );
   }
