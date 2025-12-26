@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Test artifacts
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# npm
+npm-debug.log*
+package-lock.json
+
+# Coverage
+coverage/
+.nyc_output/

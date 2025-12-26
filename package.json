@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "description": "Domain-agnostic prompt framework for reviewing optimizations across code, prompts, processes, architectures, and workflows",
   "main": "index.js",
+  "module": "index.mjs",
   "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js",
+      "types": "./index.d.ts"
+    }
+  },
   "bin": {
     "pre": "./bin/pre.js"
   },
@@ -11,12 +19,18 @@
     "optimization-reviewer-human.md",
     "optimization-reviewer-agent.toon",
     "index.js",
+    "index.mjs",
     "index.d.ts",
     "bin",
     "LICENSE"
   ],
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
   },
   "keywords": [
     "prompt",
@@ -36,12 +50,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ENCROES/optimization-reviewer.git"
+    "url": "git+https://github.com/ENCROES/Opus-4.5-Prompt-converter-NPM-package.git"
   },
   "bugs": {
-    "url": "https://github.com/ENCROES/optimization-reviewer/issues"
+    "url": "https://github.com/ENCROES/Opus-4.5-Prompt-converter-NPM-package/issues"
   },
-  "homepage": "https://github.com/ENCROES/optimization-reviewer#readme",
+  "homepage": "https://github.com/ENCROES/Opus-4.5-Prompt-converter-NPM-package#readme",
   "engines": {
     "node": ">=18.0.0"
   }
